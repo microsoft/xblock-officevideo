@@ -24,6 +24,7 @@ setup(
     name='xblock-officevideo',
     version='0.6',
     description='Office Video XBlock for adding videos from Office 365 Video to courseware',
+    license='UNKNOWN',          # TODO: choose a license: 'AGPL v3' and 'Apache 2.0' are popular.
     packages=[
         'officevideo',
     ],
