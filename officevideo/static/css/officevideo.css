@@ -1,0 +1,44 @@
+/* CSS for OfficeVideoXBlock */
+
+.officevideo-xblock p {
+    cursor: pointer;
+}
+
+.officevideo-xblock .tip {
+    float: right;
+    min-width: 20% !important;
+    width: 25%;
+}
+
+.officevideo-xblock .wrapper iframe{
+    width: 100%;
+    min-height: 569px;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #cccccc;
+}
+
+.officevideo-xblock .wrapper iframe.no-width-height{
+    top: 0;
+    left: 0;
+}
+
+.officevideo-xblock .message {
+    width: 100%;
+    margin: 5px 0px 0px 0px;
+    font-size: 12px;
+}
+
+.officevideo-xblock .error-message {
+    color: red;
+    display: none;
+    margin: 0px 0px 10px 0px;
+}
+
+.officevideo-xblock .visible {
+    display: block;
+}
+    
+.officevideo-xblock .error {
+    border: 1px solid red !important;
+}
