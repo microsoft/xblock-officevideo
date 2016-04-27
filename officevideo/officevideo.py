@@ -3,15 +3,17 @@ import textwrap
 import pkg_resources
 import urllib2
 import mimetypes
-
+import urlparse, requests, json
+import xml.etree.ElementTree as ET
 from xblock.core import XBlock
 from xblock.fragment import Fragment
 from xblock.fields import Scope, String
 from django.conf import settings
-
+from django.contrib.auth.models import User
+from social.apps.django_app.utils import load_strategy
 import logging
 LOG = logging.getLogger(__name__)
-
+import time
 import re
 from urlparse import parse_qs, urlsplit, urlunsplit
 from urllib import urlencode
@@ -30,12 +32,9 @@ class OfficeVideoXBlock(XBlock):
     EMBED_CODE_TEMPLATE = textwrap.dedent("""
         <iframe
             src="{}"
-            frameborder="0"
-            width="960"
-            height="569"
-            allowfullscreen="true"
-            mozallowfullscreen="true"
-            webkitallowfullscreen="true">
+            width="640"
+            height="360"
+            allowfullscreen>
         </iframe>
     """)
 
@@ -84,8 +83,12 @@ class OfficeVideoXBlock(XBlock):
         The primary view of the OfficeVideoXBlock, shown to students
         when viewing courses.
         """
+        embed_code = self.output_code
+        if embed_code == '':
+            embed_code = self.get_officevideo_embed_code(officevideo_url=self.video_url)
+
         html = self.resource_string("static/html/officevideo.html")
-        frag = Fragment(html.format(self=self))
+        frag = Fragment(html.format(embed_code=embed_code, message=self.message, message_display_state=self.message_display_state))
         frag.add_css(self.resource_string("static/css/officevideo.css"))
         frag.add_javascript(self.resource_string("static/js/src/officevideo.js"))
         frag.initialize_js('OfficeVideoXBlock')
@@ -117,7 +120,14 @@ class OfficeVideoXBlock(XBlock):
 
         self.video_url = submissions['video_url']
 
-        self.output_code = self.get_officevideo_embed_code(officevideo_url=self.video_url)
+        # Check if user have entered embed code
+        embed_code_regex = '<iframe '
+        matched = re.match(embed_code_regex, self.video_url, re.IGNORECASE)
+
+        if matched is not None:
+            self.output_code = self.video_url
+        else:
+            self.output_code = ''
         self.message = "Note: Office Video message."
         self.message_display_state = "block"
 
@@ -125,20 +135,25 @@ class OfficeVideoXBlock(XBlock):
 
     def get_officevideo_embed_code(self, officevideo_url):
 
-        officevideo_url = officevideo_url.strip()
+        embed_code = ''
+        try:
+            django_user_social = User.objects.get(id=self.xmodule_runtime.user_id).social_auth.get(provider='azuread-oauth2')
+            if int(django_user_social.extra_data['expires_on']) < int(time.time()):
+                django_user_social.refresh_token(load_strategy())
+                django_user_social = User.objects.get(id=self.xmodule_runtime.user_id).social_auth.get(provider='azuread-oauth2')
+            url = self.video_url
+            parsed = urlparse.urlparse(url)
+            query_params = urlparse.parse_qs(parsed.query)
+            resp = requests.get("https://" + parsed.netloc + "/portals/hub/_api/VideoService/Channels('" + query_params['chid'][0] + "')/Videos('" + query_params['vid'][0] + "')/GetVideoEmbedCode",
+                             headers={'Authorization': 'Bearer ' + django_user_social.tokens,
+                                      'Content-Type': 'application/json;odata=verbose'})
+            root = ET.fromstring(resp._content)
+            embed_code = unicode(root.text, "utf-8")
+        except:
+            embed_code = '<a href="'+ officevideo_url +'">Office Video</a>'
 
-        scheme, netloc, path, query_string, fragment = urlsplit(officevideo_url)
-        query_params = parse_qs(query_string)
+        return embed_code
 
-        # OfficeVideo
-        odb_regex = 'https?:\/\/((\w|-)+)-my.sharepoint.com\/'
-        matched = re.match(odb_regex, officevideo_url, re.IGNORECASE)
-
-        if matched is not None:
-            query_params['action'] = ['embedview']
-            new_query_string = urlencode(query_params, doseq=True)
-            video_url = urlunsplit((scheme, netloc, path, new_query_string, fragment))
-            return self.EMBED_CODE_TEMPLATE.format(video_url)
 
     @staticmethod
     def workbench_scenarios():
