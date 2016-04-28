@@ -150,7 +150,7 @@ class OfficeVideoXBlock(XBlock):
             root = ET.fromstring(resp._content)
             embed_code = unicode(root.text, "utf-8")
         except:
-            embed_code = '<a href="'+ officevideo_url +'">Office Video</a>'
+            embed_code = '<a target="_blank" href="'+ officevideo_url +'">Office 365 Video</a>'
 
         return embed_code
 
