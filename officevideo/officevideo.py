@@ -49,7 +49,7 @@ class OfficeVideoXBlock(XBlock):
         display_name="Video URL",
         help="Navigate to the video in your browser and ensure that it is accessible to your intended audience. Copy its URL or embed code and paste it into this field.",
         scope=Scope.settings,
-        default=DEFAULT_VIDEO_URL
+        default=EMBED_CODE_TEMPLATE.format(DEFAULT_VIDEO_URL)
     )
 
     output_code = String(
@@ -118,6 +118,7 @@ class OfficeVideoXBlock(XBlock):
                 'result': 'error'
             }
 
+        self.display_name = submissions['display_name']
         self.video_url = submissions['video_url']
 
         # Check if user have entered embed code
