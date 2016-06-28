@@ -63,7 +63,7 @@ class OfficeVideoXBlock(XBlock):
         display_name="video display status message",
         help="Message to help students in case of errors.",
         scope=Scope.settings,
-        default="Note: Office Video message."
+        default=""
     )
 
     message_display_state = String(
