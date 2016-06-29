@@ -25,7 +25,7 @@ from urllib import urlencode
     src='https://wwedudemo17.sharepoint.com/portals/hub/_layouts/15/VideoEmbedHost.aspx?chId=4fe89746%2D6fd9%2D4a2b%2D9a42%2Dea41c5853a53&amp;vId=70113d75%2D9a34%2D494a%2D972d%2Ddc498c12168f&amp;width=640&amp;height=360&amp;autoPlay=false&amp;showInfo=true' allowfullscreen></iframe> 
 """
 
-DEFAULT_VIDEO_URL = ('https://wwedudemo17.sharepoint.com/portals/hub/_layouts/15/VideoEmbedHost.aspx?chId=4fe89746%2D6fd9%2D4a2b%2D9a42%2Dea41c5853a53&amp;vId=70113d75%2D9a34%2D494a%2D972d%2Ddc498c12168f&amp;width=640&amp;height=360&amp;autoPlay=false&amp;showInfo=true')
+DEFAULT_VIDEO_URL = ('https://www.youtube.com/embed/uXsJ_9lQubc')
 
 class OfficeVideoXBlock(XBlock):
 
@@ -129,7 +129,7 @@ class OfficeVideoXBlock(XBlock):
             self.output_code = self.video_url
         else:
             self.output_code = ''
-        self.message = "Note: Office Video message."
+        self.message = ""
         self.message_display_state = "block"
 
         return {'result': 'success'}
