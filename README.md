@@ -43,7 +43,7 @@ This will bring up a list of the XBlocks that have been enabled in Studio. If yo
 
 After you've inserted the OfficeVideo XBlock, a default video will be inserted into your unit as shown in the screen shot below.
 
-![Studio Initial OfficeVideo XBlock Insertion](docs/img/xblock_insert.png)
+![Studio Initial OfficeVideo XBlock Insertion](docs/img/officevideo_default.png)
 
 To change the video added to the course using the OfficeVideo XBlock, click on the `Edit` button on the upper-right corner of the XBlock. This will bring up the edit dialog where you can change the display name of the component as well as the video that is being inserted and how you want it to be embedded.
 
@@ -54,11 +54,15 @@ In this dialog, you can
 - Update the XBlock title.
 - Enter the URL or embed code for the video from its original location (in OfficeVideo) 
     - Note that the video must be accessible to the intended audience. 
-    - Also, note that you do not need to obtain an embed code for the video yourself. The OfficeVideo XBlock can build it automatically. 
+    - Also, note that you do not need to obtain an embed code for the video yourself. The OfficeVideo XBlock can build it automatically at runtime from the URL for the video. (It will appear as just a link to the video in the Studio, but when students view it in the LMS after logging in using their Office 365 credentials, the link will be replaced by an embedded video.)
 
 After you click save, your OfficeVideo XBlock will have been updated with the new values.
 
-![Updated studio view](docs/img/xblock_insert.png)
+If you entered the embed code for the video:
+![Updated studio view](docs/img/officevideo_studio_view.png)
+
+If you had entered the URL to the video:
+![Updated studio view](docs/img/officevideo_studio_view_link.png)
 
 At this point simply click on the `Publish` button and the video will be available for students to view it from the LMS.
 
