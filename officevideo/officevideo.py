@@ -4,22 +4,20 @@
 import textwrap
 
 import pkg_resources
-import urllib2
-import mimetypes
-import urlparse, requests, json
+import requests
+from urllib.parse import urlparse, parse_qs
 import xml.etree.ElementTree as ET
 from xblock.core import XBlock
-from xblock.fragment import Fragment
+from web_fragments.fragment import Fragment
 from xblock.fields import Scope, String
 from django.conf import settings
 from django.contrib.auth.models import User
-from social.apps.django_app.utils import load_strategy
+from social_django.utils import load_strategy
 import logging
 LOG = logging.getLogger(__name__)
 import time
 import re
-from urlparse import parse_qs, urlsplit, urlunsplit
-from urllib import urlencode
+
 
 """test url: https://wwedudemo17.sharepoint.com/portals/hub/_layouts/15/PointPublishing.aspx?app=video&p=p&chid=4fe89746-6fd9-4a2b-9a42-ea41c5853a53&vid=70113d75-9a34-494a-972d-dc498c12168f """
 
@@ -146,13 +144,13 @@ class OfficeVideoXBlock(XBlock):
                 django_user_social.refresh_token(load_strategy())
                 django_user_social = User.objects.get(id=self.xmodule_runtime.user_id).social_auth.get(provider='azuread-oauth2')
             url = self.video_url
-            parsed = urlparse.urlparse(url)
-            query_params = urlparse.parse_qs(parsed.query)
+            parsed = urlparse(url)
+            query_params = parse_qs(parsed.query)
             resp = requests.get("https://" + parsed.netloc + "/portals/hub/_api/VideoService/Channels('" + query_params['chid'][0] + "')/Videos('" + query_params['vid'][0] + "')/GetVideoEmbedCode",
                              headers={'Authorization': 'Bearer ' + django_user_social.tokens,
                                       'Content-Type': 'application/json;odata=verbose'})
             root = ET.fromstring(resp._content)
-            embed_code = unicode(root.text, "utf-8")
+            embed_code = str(root.text, "utf-8")
         except:
             embed_code = '<a target="_blank" href="'+ officevideo_url +'">Office 365 Video</a>'
 
